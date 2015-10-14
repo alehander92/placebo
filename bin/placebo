@@ -1,9 +1,28 @@
 #!/usr/bin/env ruby
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
 require 'placebo'
+require 'pp'
 
 unless ARGV.empty?
   # do nasty stuff with ARGV
+
+  source = read_source ARGV.first
+  dom, rules = Placebo.parse_html source, ARGV.first.split('/')[0..-2].join('/')
+  # p dom
+  # p rules
+
+  # rules = Placebo.parse_css dom.children[1].children[1].children[1].children[0].text
+  p rules
+  puts "\n"
+  style = Placebo::StyleTree.new dom, rules
+  pp style
+  puts "\n"
+  puts "LAYOUT"
+  layout = Placebo::Layout.build style
+  pp layout
+  puts "\n"
+
+  Placebo::Raster.new.render layout
 else
   puts 'placebo <path-to-page.html>'
 end
